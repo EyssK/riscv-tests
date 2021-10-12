@@ -5,6 +5,7 @@
 #include "cpp_utils.h"
 #include "env.h"
 #include "Network.h"
+#include "util.h"
 
 void readStimulus(
                   UDATA_T* inputBuffer,
@@ -46,6 +47,7 @@ int processInput(        UDATA_T* inputBuffer,
 int main(int argc, char* argv[]) {
 
     // const N2D2::Network network{};
+    size_t instret, cycles;
 
 #if ENV_DATA_UNSIGNED
     UDATA_T inputBuffer[ENV_SIZE_Y*ENV_SIZE_X*ENV_NB_OUTPUTS];
@@ -57,11 +59,17 @@ int main(int argc, char* argv[]) {
     Target_T predictedOutputBuffer[OUTPUTS_SIZE[0]];
 
     readStimulus(inputBuffer, expectedOutputBuffer);
+    instret = -read_csr(minstret);
+    cycles = -read_csr(mcycle);
     const int success = processInput(inputBuffer, 
                                                         expectedOutputBuffer, 
                                                         predictedOutputBuffer);
+    instret += read_csr(minstret);
+    cycles += read_csr(mcycle);
     
     printf("Result : %d/1\n", success);
+    printf("image %s: %d instructions\n", stringify(MNIST_INPUT_IMAGE), (int)(instret));
+    printf("image %s: %d cycles\n", stringify(MNIST_INPUT_IMAGE), (int)(cycles));
 
 #ifdef OUTPUTFILE
     FILE *f = fopen("success_rate.txt", "w");

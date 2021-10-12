@@ -6,7 +6,17 @@
 
 #include <stdint.h>
 
+#define CHOOSE_INPUT_IMAGE 3
+
 #define NO_EXCEPT
+
+#if CHOOSE_INPUT_IMAGE == 3
+#define MNIST_INPUT_IMAGE env0003
+#elif CHOOSE_INPUT_IMAGE == 4618
+#define MNIST_INPUT_IMAGE env4618
+#else
+#error You need to choose your input image : CHOOSE_INPUT_IMAGE
+#endif
 
 #define ENV_SIZE_X 24
 #define ENV_SIZE_Y 24
